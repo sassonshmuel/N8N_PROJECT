@@ -1,0 +1,1102 @@
+{
+  "name": "Project",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerOn": "folder",
+        "path": "/data/incoming_docs",
+        "events": [
+          "add"
+        ],
+        "options": {
+          "usePolling": false
+        }
+      },
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        32
+      ],
+      "id": "e41c042d-08c4-47b4-8977-017cf6135f0d",
+      "name": "Local File Trigger"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.path }}",
+                    "rightValue": "/^.*/[^/]+\\.txt$/",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    },
+                    "id": "1e496477-4771-46a1-a745-66cd563657d4"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a62ed251-a581-46bd-b46b-35e2e3292e90",
+                    "leftValue": "={{ $json.path }}",
+                    "rightValue": "/^.*/[^/]+\\.pdf$/",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d784bb3-b7df-44f5-bbc3-828c3ad0bd7e",
+                    "leftValue": "={{ $json.path }}",
+                    "rightValue": "/^.*/[^/]+\\.docx$/",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1617685b-5fd3-4880-9488-1ee67d0dd0f9",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "623b80f3-3d26-42dc-8cfa-e305ffb41370",
+              "leftValue": "={{ $json.total_images }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        832,
+        -112
+      ],
+      "id": "5e44348f-c698-466a-9a81-31238dc787ff",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "=images",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        992,
+        -336
+      ],
+      "id": "6b24a3a2-f921-439f-8b8c-e1f7adb7bb57",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze this image extracted from a PDF.\n\nReturn JSON:\n{\n  \"type\": \"chart | table | scanned_text | diagram | screenshot | other\",\n  \"summary\": \"...\",\n  \"ocr_text\": \"...\",\n  \"important_for_rag\": true\n}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1504,
+        -336
+      ],
+      "id": "48787f48-07d3-48e6-b852-af9c1c629f0e",
+      "name": "AI Agent",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1504,
+        -144
+      ],
+      "id": "03a9c04b-dbc8-4ad9-a17a-678ccb0f7948",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "iOBtDQfnyYk2Xe2t",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4276e738-dd99-4922-ba12-ef0c66709573",
+              "name": "images",
+              "value": "={{ JSON.parse($json.stdout).images }}",
+              "type": "array"
+            },
+            {
+              "id": "a7823a8d-248f-4011-bbcd-49891f3f0aa3",
+              "name": "text",
+              "value": "={{ JSON.parse($json.stdout).text }}",
+              "type": "string"
+            },
+            {
+              "id": "31334d5e-fdb7-424a-83a9-452b5dfe091f",
+              "name": "total_images",
+              "value": "={{ JSON.parse($json.stdout).total_images }}",
+              "type": "number"
+            },
+            {
+              "id": "f18e005a-9b0e-4d8f-9eaf-62a51d7eb60e",
+              "name": "file",
+              "value": "={{ JSON.parse($json.stdout) }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        16
+      ],
+      "id": "f3f3bf26-8c13-44dc-b951-22b02705f216",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return {\n  json: {\n    pdf_text: $('Edit Fields').first().json.text,\n    image: {\n      page: $json.page,\n      index: $json.index,\n      file_name: $json.file_name,\n      file_path: $json.file_path,\n      mime_type: $json.mime_type,\n      width: $json.width,\n      height: $json.height,\n      size_bytes: $json.size_bytes\n    }\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        -336
+      ],
+      "id": "859bae17-5c87-4768-b2d7-812d7e7051b9",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1792,
+        -336
+      ],
+      "id": "8f8f9cb5-c863-4544-bf3d-2d7901a61d4f",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2016,
+        0
+      ],
+      "id": "e6eb736d-024d-4275-a96c-bdc1104edc1d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $json.image.file_path }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        -336
+      ],
+      "id": "4dd667b4-4368-4c3d-98b0-f810bd5058b8",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8000/enrich",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.gemini_text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2992,
+        -256
+      ],
+      "id": "50d0d193-76d1-45c0-aedb-e11361ee3d37",
+      "name": "Enrichment",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [{\n    \"parts\": [{ \"text\": {{ JSON.stringify($json.system_prompt) }} }]\n  }],\n  \"generationConfig\": {\n    \"temperature\": 0.2,\n    \"responseMimeType\": \"application/json\"\n  }\n}\n",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 5000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2624,
+        -160
+      ],
+      "id": "a7e0b200-bfaa-40d8-ba77-1bfb4346c48a",
+      "name": "Summarization",
+      "retryOnFail": true,
+      "executeOnce": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "agERbvpZHB31VGMi",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8cf5d2ff-3dc4-43b3-8ee0-f9cdc5e687cb",
+              "name": "system_prompt",
+              "value": "=You are a document intelligence assistant. Analyze the following document text and return ONLY a valid JSON object with these exact fields:   {   \"summary\": \"2-3 sentence summary of the document\",   \"classification\": \"one of: [invoice, report, contract, ticket, article, other]\",   \"sentiment\": \"one of: [positive, neutral, negative]\",   \"entities\": {     \"people\": [\"list of person names\"],     \"organizations\": [\"list of org names\"],     \"dates\": [\"list of dates mentioned\"],     \"amounts\": [\"list of monetary amounts\"]   },   \"action_items\": [\"list of recommended actions\"],   \"confidence_score\": 0.0 to 1.0 }   Document text:{{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2432,
+        -160
+      ],
+      "id": "13a4a5f2-a184-411c-b905-cf40dc229742",
+      "name": "Set Prompt"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nlet text = \"\";\nconst imageDescriptions = [];\nlet fileName = \"\";\n\nfor (const item of items) {\n  const data = item.json;\n\n  // Extract file name\n  if (data.file && data.file.file_name) {\n    fileName = data.file.file_name;\n  }\n\n  // Collect text\n  if (data.text) {\n    text += data.text + \"\\n\";\n  }\n\n  // Collect image descriptions\n  if (Array.isArray(data.data)) {\n\n    for (const aiResult of data.data) {\n\n      let output = aiResult.output || \"\";\n\n      // Remove markdown wrappers\n      output = output\n        .replace(/```json/g, \"\")\n        .replace(/```/g, \"\")\n        .trim();\n\n      try {\n        const parsed = JSON.parse(output);\n\n        imageDescriptions.push({\n          type: parsed.type,\n          summary: parsed.summary,\n          ocr_text: parsed.ocr_text\n        });\n\n      } catch (e) {\n        imageDescriptions.push({\n          raw_output: output\n        });\n      }\n    }\n  }\n}\n\nreturn [\n  {\n    json: {\n      file_name: fileName,\n      text: text.trim(),\n      images_descriptions: imageDescriptions\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2224,
+        0
+      ],
+      "id": "2b132996-6d59-44c7-ab2b-fae9db65a210",
+      "name": "Normalize Output"
+    },
+    {
+      "parameters": {
+        "command": "=python3 /scripts/extract_txt.py {{$json.path}} 2>&1 || true"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        432,
+        -208
+      ],
+      "id": "7ad1c5f5-ecdc-4a19-a214-accfd906905a",
+      "name": "Extract TXT file"
+    },
+    {
+      "parameters": {
+        "command": "=python3 /scripts/extract_pdf.py {{$json.path}} 2>&1 || true"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        432,
+        16
+      ],
+      "id": "66ad341e-4d11-4cc4-8838-24147b038905",
+      "name": "Extract PDF file"
+    },
+    {
+      "parameters": {
+        "command": "=python3 /scripts/extract_docx.py {{$json.path}} 2>&1 || true"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        432,
+        240
+      ],
+      "id": "9aef98ff-698e-4351-8769-ddbe00afbba4",
+      "name": "Extract DOCX file"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3168,
+        32
+      ],
+      "id": "c210fb31-8f73-4b4f-90a4-92378b876d78",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Please analyze the following data:\n- Document ID: {{ $json.document_id }}\n- Department: {{ $json.department }}\n- Sensitivity: {{ $json.sensitivity }}\n- Routing tags: {{ $json.routing_tag }}\n- Processed at: {{ $json.processed_at }}\n- summary: {{ $json.gemini_text.summary }}",
+        "options": {
+          "systemMessage": "Each time you run, perform the following actions based on your inputs.\n1. Send an email.\n2. Write the data to a Google Sheet.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        3344,
+        208
+      ],
+      "id": "f9362934-cd49-419e-b5d5-20267acae959",
+      "name": "AI Agent1",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        3344,
+        400
+      ],
+      "id": "01807a4e-480b-41cc-abc7-8b8a8b049ae1",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "iOBtDQfnyYk2Xe2t",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "sassonsh76@gmail.com",
+        "subject": "=Subject: [{{$json.gemini_text.classification}}] New document processed: {{ $json.file_name }}",
+        "message": "=<h2>Document Processed</h2>\n<p><b>File:</b> {{$json.file_name}}</p>\n<p><b>Classification:</b> {{$json.gemini_text.classification}}</p>\n<p><b>Sentiment:</b> {{$json.gemini_text.sentiment}}</p>\n<p><b>Department:</b> {{$json.department}}</p>\n<p><b>Sensitivity:</b> {{$json.sensitivity}}</p>\n<p><b>Routing tag:</b> {{$json.routing_tag}}</p>\n<h3>Summary</h3>\n<p>{{$json.gemini_text.summary}}</p>\n<h3>Action items</h3>\n<p>{{$json.gemini_text.action_items}}</p>\n<hr>\n<p><i>Sent automatically by n8n + Gemini 3 Document Analyst</i></p>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        3680,
+        400
+      ],
+      "id": "900bdd2a-91f3-44a4-b2fb-9f260a1afc59",
+      "name": "Send a message in Gmail",
+      "webhookId": "900a9a4d-a110-4fb3-a7cc-6f7fc343a3de",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3bkjLgX2qGWwSaxN",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1qdYX2wKunzKnLlAaq9Nr1gZVk2xUQ0czOs3umLwRZWY",
+          "mode": "list",
+          "cachedResultName": "n8n data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qdYX2wKunzKnLlAaq9Nr1gZVk2xUQ0czOs3umLwRZWY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qdYX2wKunzKnLlAaq9Nr1gZVk2xUQ0czOs3umLwRZWY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sentiment and confidence_score": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('sentiment_and_confidence_score', ``, 'string') }}",
+            "classification/department": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('classification_department', ``, 'string') }}",
+            "processed_at": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('processed_at', ``, 'string') }}",
+            "document_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('document_id', ``, 'string') }}",
+            "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('summary', ``, 'string') }}",
+            "routing_tag and sensitivity": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('routing_tag_and_sensitivity', ``, 'string') }}",
+            "action_items": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('action_items', ``, 'string') }}",
+            "filename/file-type": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('filename_file-type', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "document_id",
+              "displayName": "document_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "filename/file-type",
+              "displayName": "filename/file-type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "processed_at",
+              "displayName": "processed_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "classification/department",
+              "displayName": "classification/department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sentiment and confidence_score",
+              "displayName": "sentiment and confidence_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "routing_tag and sensitivity",
+              "displayName": "routing_tag and sensitivity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "action_items",
+              "displayName": "action_items",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        3520,
+        400
+      ],
+      "id": "8b269bb9-abc8-40a4-a3a0-12a4f03a3a4e",
+      "name": "Append row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "p2IX9mlIHKvz4dF0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "12cb5165-d4a1-4174-a8ed-a360c3f657f8",
+              "name": "gemini_text",
+              "value": "={{ JSON.parse($json.candidates[0].content.parts[0].text) }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2832,
+        -160
+      ],
+      "id": "dd5308e4-5b34-4630-ae6a-857013ea31d8",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "143d1df1-2ced-4182-bc54-30882e3f6694",
+              "name": "file_name",
+              "value": "={{ $json.file_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2432,
+        96
+      ],
+      "id": "3e7b9080-1bcb-4d89-b9a9-2179c7704062",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\n\nconst originalName = item.json.file_name || \"document\";\nconst baseName = originalName.replace(/\\.[^.]+$/, \"\");\n\nreturn [\n  {\n    json: {\n      filename: `${baseName}.json`\n    },\n    binary: {\n      fileContent: await this.helpers.prepareBinaryData(\n        Buffer.from(JSON.stringify(item.json, null, 2), \"utf8\"),\n        `${baseName}.json`,\n        \"application/json\"\n      )\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3376,
+        -128
+      ],
+      "id": "18d806d2-3bc5-4613-a6f2-7679de81f06a",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\n\nconst originalName = item.json.file_name || \"document\";\nconst baseName = originalName.replace(/\\.[^.]+$/, \"\");\n\nconst md = `# ${originalName}\n\n## Summary\n${item.json.gemini_text?.summary || \"\"}\n\n## Classification\n${item.json.gemini_text?.classification || \"\"}\n\n## Sentiment\n${item.json.gemini_text?.sentiment || \"\"}\n\n## Department\n${item.json.department || \"\"}\n\n## Sensitivity\n${item.json.sensitivity || \"\"}\n\n## Routing Tag\n${item.json.routing_tag || \"\"}\n\n## Action Items\n${Array.isArray(item.json.gemini_text?.action_items)\n  ? item.json.gemini_text.action_items.map(a => `- ${a}`).join(\"\\n\")\n  : item.json.gemini_text?.action_items || \"\"}\n\n## Full JSON\n\n\\`\\`\\`json\n${JSON.stringify(item.json, null, 2)}\n\\`\\`\\`\n`;\n\nreturn [\n  {\n    json: {\n      filename: `${baseName}.md`\n    },\n    binary: {\n      fileContent: await this.helpers.prepareBinaryData(\n        Buffer.from(md, \"utf8\"),\n        `${baseName}.md`,\n        \"text/markdown\"\n      )\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3376,
+        48
+      ],
+      "id": "561562e6-f045-4105-a926-4be3bc4e5ba8",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/data/output_docs/{{ $json.filename }}",
+        "dataPropertyName": "fileContent",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        3616,
+        48
+      ],
+      "id": "88427c56-321b-416e-8f3e-59605bc03d3b",
+      "name": "Save MD file"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/data/output_docs/{{$json.filename}}",
+        "dataPropertyName": "=fileContent",
+        "options": {
+          "append": false
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        3616,
+        -128
+      ],
+      "id": "56360a03-487e-4151-8fc1-bf4a01920570",
+      "name": "Save JSON file"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Local File Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Extract TXT file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract PDF file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract DOCX file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Normalize Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarization": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Prompt": {
+      "main": [
+        [
+          {
+            "node": "Summarization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Output": {
+      "main": [
+        [
+          {
+            "node": "Set Prompt",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract TXT file": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract PDF file": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract DOCX file": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enrichment": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Enrichment",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Save JSON file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Save MD file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save JSON file": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "809d3ab1-b2f4-4d7a-8031-d1158da81977",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a7164735f540bb6c19ad63ce23b84965ed113e5cafcff60c75a1e45362991447"
+  },
+  "id": "Acpi7kQRuDyHt0HP",
+  "tags": []
+}
