@@ -84,8 +84,7 @@
                     "rightValue": "/^.*/[^/]+\\.docx$/",
                     "operator": {
                       "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
+                      "operation": "regex"
                     }
                   }
                 ],
@@ -337,8 +336,7 @@
         "options": {
           "batching": {
             "batch": {
-              "batchSize": 1,
-              "batchInterval": 5000
+              "batchSize": 20
             }
           }
         }
@@ -1092,7 +1090,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "809d3ab1-b2f4-4d7a-8031-d1158da81977",
+  "versionId": "f1dfddae-5ffa-4f14-ac98-e0d23530612e",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "a7164735f540bb6c19ad63ce23b84965ed113e5cafcff60c75a1e45362991447"

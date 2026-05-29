@@ -12,7 +12,7 @@ MIN_IMAGE_HEIGHT = 300
 MIN_IMAGE_BYTES = 20_000
 
 # Where extracted images will be saved
-OUTPUT_IMAGES_DIR = Path("/home/node/.n8n-files/extracted_images")
+OUTPUT_IMAGES_DIR = Path("/data/extracted_images")
 
 
 def should_send_image(width, height, size_bytes):

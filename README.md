@@ -142,3 +142,8 @@ Final results are distributed to downstream systems including Google Sheets, ema
 * Email notifications
 * JSON and Markdown output generation
 * Fully containerized n8n environment with Python support
+
+## Results
+ * The N8N project file json can be found in the project's root (Project.json).
+ * The input and output files examples can be found in the results/ directory, input/ and output/ folders.
+ * Google Spreadsheet: https://docs.google.com/spreadsheets/d/1qdYX2wKunzKnLlAaq9Nr1gZVk2xUQ0czOs3umLwRZWY/edit?usp=sharing

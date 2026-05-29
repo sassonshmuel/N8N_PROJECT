@@ -1,0 +1,34 @@
+OpenAI Company Financial Report
+Two-page public-source snapshot | Prepared May 2026
+
+Executive Summary
+OpenAI is a privately held AI company, so it does not publish audited public financial statements. This report uses public company statements and reputable news reporting, and treats revenue figures as annualized run-rate / ARR rather than GAAP revenue.
+
+Revenue growth: OpenAI reported ARR of about $2B in 2023, $6B in 2024, and $20B+ in 2025. Reuters later reported that The Information placed OpenAI above $25B in annualized revenue by the end of February 2026.
+
+Funding and valuation: In March 2025, OpenAI announced a SoftBank-led financing round of up to $40B at a $300B valuation. Later press reports indicated much higher private-market valuation levels, showing intense investor demand but also high expectations.
+
+Key Financial Indicators
+- Annualized revenue / ARR: >$25B reported for Feb. 2026.
+- 2025 ARR: OpenAI stated $20B+.
+- March 2025 funding: Up to $40B at $300B valuation.
+- Cost profile: No audited profit disclosure.
+
+Revenue Trajectory and Capital Requirements
+The revenue curve is unusually steep. OpenAI describes a compute-to-revenue flywheel: more compute supports better models and greater product adoption, which then funds additional compute. This creates a business with high growth potential, but also very large reinvestment requirements.
+
+Financial Outlook
+Base case: OpenAI continues to expand subscriptions, API usage, enterprise deployments, and agent/workflow products. Under this path, revenue growth remains strong, while absolute infrastructure spending stays very high.
+
+Upside case: Wider enterprise adoption and lower inference costs could improve unit economics. Partnerships across cloud and infrastructure providers may reduce capacity bottlenecks and support faster monetization.
+
+Risk case: The company faces competitive pressure, model-training and inference costs, regulatory uncertainty, and dependency on capital markets. Because OpenAI is private, investors and analysts must rely on limited disclosures and reported figures.
+
+Conclusion
+OpenAI appears to be one of the fastest-scaling private technology companies by annualized revenue. The main financial question is not demand, but whether revenue growth, product pricing, and infrastructure efficiency can keep pace with the capital required to train and serve frontier AI systems.
+
+Sources
+- OpenAI, “A business that scales with the value of intelligence,” Jan. 2026.
+- Reuters, “OpenAI tops $25 billion in annualized revenue, The Information reports,” Mar. 2026.
+- Reuters, “OpenAI to raise $40 billion in SoftBank-led round to boost AI efforts,” Apr. 2025.
+- Wikimedia Commons, “OpenAI logo with magnifying glass,” photo by Jernej Furman, CC BY 2.0.
