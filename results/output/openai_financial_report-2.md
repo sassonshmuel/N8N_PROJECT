@@ -1,0 +1,79 @@
+# openai_financial_report-2.docx
+
+## Summary
+This report provides a financial snapshot of OpenAI as of May 2026, highlighting its rapid revenue growth from $2B in 2023 to over $25B by early 2026. It details significant capital raises, including a $40B round led by SoftBank, and analyzes the company's compute-to-revenue flywheel model.
+
+## Classification
+report
+
+## Sentiment
+positive
+
+## Department
+Management
+
+## Sensitivity
+confidential
+
+## Routing Tag
+auto-approved
+
+## Action Items
+- Monitor OpenAI's transition from private to potentially public financial disclosures
+- Assess the sustainability of the compute-to-revenue flywheel
+- Track regulatory developments affecting AI scaling and infrastructure
+
+## Full JSON
+
+```json
+{
+  "document_id": "ec0039be-91c5-4c69-bc59-9687b9fee74e",
+  "department": "Management",
+  "sensitivity": "confidential",
+  "routing_tag": "auto-approved",
+  "processed_at": "2026-05-29T16:07:02.220611",
+  "gemini_text": {
+    "summary": "This report provides a financial snapshot of OpenAI as of May 2026, highlighting its rapid revenue growth from $2B in 2023 to over $25B by early 2026. It details significant capital raises, including a $40B round led by SoftBank, and analyzes the company's compute-to-revenue flywheel model.",
+    "classification": "report",
+    "sentiment": "positive",
+    "entities": {
+      "people": [
+        "Jernej Furman"
+      ],
+      "organizations": [
+        "OpenAI",
+        "Reuters",
+        "The Information",
+        "SoftBank",
+        "Wikimedia Commons"
+      ],
+      "dates": [
+        "May 2026",
+        "2023",
+        "2024",
+        "2025",
+        "February 2026",
+        "March 2025",
+        "Jan. 2026",
+        "Mar. 2026",
+        "Apr. 2025"
+      ],
+      "amounts": [
+        "$2B",
+        "$6B",
+        "$20B+",
+        "$25B",
+        "$40B",
+        "$300B"
+      ]
+    },
+    "action_items": [
+      "Monitor OpenAI's transition from private to potentially public financial disclosures",
+      "Assess the sustainability of the compute-to-revenue flywheel",
+      "Track regulatory developments affecting AI scaling and infrastructure"
+    ],
+    "confidence_score": 0.95
+  },
+  "file_name": "openai_financial_report-2.docx"
+}
+```
